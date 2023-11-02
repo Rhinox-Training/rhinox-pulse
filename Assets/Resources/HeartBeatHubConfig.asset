@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efa16c367fb143e198b61cdb272f61f5, type: 3}
   m_Name: HeartBeatHubConfig
   m_EditorClassIdentifier: 
-  HostIP: 
-  HostPort: 0
+  HostIP: 127.0.0.1
+  HostPort: 7777
   HTTPS: 0

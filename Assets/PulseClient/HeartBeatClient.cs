@@ -10,10 +10,11 @@ using UnityEngine.Networking;
 
 namespace Rhinox.Pulse
 {
-    public class HeartBeatClient : Singleton<HeartBeatClient>
+    public static class HeartBeatClient
     {
         private static ManagedCoroutine _heartbeatRoutine;
         private static List<ServerInfo> _serverListOptions;
+        public static IReadOnlyList<ServerInfo> ServerListOptions => _serverListOptions;
 
         public delegate void ServerListUpdatedDelegate();
 
