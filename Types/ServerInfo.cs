@@ -2,6 +2,7 @@
 
 namespace Rhinox.Pulse
 {
+    [Serializable]
     public class ServerInfo : IEquatable<ServerInfo>
     {
         public string IP;
