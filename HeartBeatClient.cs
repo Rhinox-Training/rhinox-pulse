@@ -64,7 +64,7 @@ namespace Rhinox.Pulse
                     else
                     {
                         var serverOptions = JsonHelper.FromJson<ServerInfo>(www.downloadHandler.text);
-                        UpdateServerInfoList(serverOptions);
+                        UpdateServerInfoList(serverOptions ?? Array.Empty<ServerInfo>());
                     }
                 }
             }
@@ -77,10 +77,10 @@ namespace Rhinox.Pulse
                 _serverListOptions = new List<ServerInfo>();
             _serverListOptions.Clear();
 
-            if (input.Length <= 0)
-                return;
-
-            _serverListOptions.AddRange(input);
+            if (input != null && input.Length > 0)
+            {
+                _serverListOptions.AddRange(input);
+            }
 
             ServerListUpdated?.Invoke();
         }
