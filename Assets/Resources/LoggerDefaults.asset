@@ -12,4 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ea50f6a2ab049ef8967e364c6555743, type: 3}
   m_Name: LoggerDefaults
   m_EditorClassIdentifier: 
-  Settings: []
+  Settings:
+  - TypeName: UtilityLogger
+    FullTypeName: Rhinox.Utilities.UtilityLogger
+    Muted: 0
+    Level: 6
+    ThrowExceptionOnFatal: 0
+  - TypeName: MagnusLogger
+    FullTypeName: Rhinox.Magnus.MagnusLogger
+    Muted: 0
+    Level: 6
+    ThrowExceptionOnFatal: 0
+  - TypeName: PulseLogger
+    FullTypeName: Rhinox.Pulse.PulseLogger
+    Muted: 0
+    Level: 2
+    ThrowExceptionOnFatal: 0
+  - TypeName: DefaultLogger
+    FullTypeName: Rhinox.Perceptor.PLog+DefaultLogger
+    Muted: 0
+    Level: 6
+    ThrowExceptionOnFatal: 0
