@@ -21,7 +21,7 @@ namespace Rhinox.Pulse
         public override string ToString()
         {
             //ex. "127.0.0.1:7777   2/8"
-            return $"{IP}:{Port}\t{Players}/{MaxPlayers}";
+            return $"{IP}:{Port.ToString()}\t{Players.ToString()}/{MaxPlayers.ToString()}";
         }
 
         public bool Equals(ServerInfo other)
@@ -43,7 +43,7 @@ namespace Rhinox.Pulse
         {
             unchecked
             {
-                return ((IP != null ? IP.GetHashCode() : 0) * 397) ^ (Port != null ? Port.GetHashCode() : 0);
+                return ((IP != null ? IP.GetHashCode() : 0) * 397) ^ Port.GetHashCode();
             }
         }
 
