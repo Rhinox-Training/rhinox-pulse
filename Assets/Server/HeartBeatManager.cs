@@ -28,6 +28,8 @@ namespace Rhinox.Pulse
         private float _updateTime = 1f;
         private float _deceasedTimeOut = 120f;
 
+        private object _lockObj = new object();
+
         protected override void OnInitialize()
         {
             base.OnInitialize();
@@ -57,8 +59,7 @@ namespace Rhinox.Pulse
             _listenerThread = new Thread(StartListener);
             _listenerThread.Start();
 
-            PLog.Info<PulseLogger>("Started listener");
-            PLog.Info<PulseLogger>("\n======================");
+            PLog.Info<PulseLogger>("\n\n======================");
             PLog.Info<PulseLogger>("|| Started listener ||");
             PLog.Info<PulseLogger>("======================\n\n");
         }
@@ -67,12 +68,13 @@ namespace Rhinox.Pulse
         {
             base.Update();
 
-            _timePassed += Time.deltaTime;
-            if (_timePassed >= _updateTime)
+            //seconds to milliseconds then cast to int
+            Thread.Sleep(Convert.ToInt32(_updateTime * 1000f));
+
+            Console.Clear();
+
+            lock (_lockObj)
             {
-                _timePassed -= _updateTime;
-                Console.Clear();
-                // Console.
                 CleanupHeartBeats();
                 LogHeartBeats();
             }
@@ -80,8 +82,6 @@ namespace Rhinox.Pulse
 
         private void CleanupHeartBeats()
         {
-            if (_availableServers.Count == 0) return;
-
             foreach (var entry in _availableServers.Keys.ToArray())
             {
                 _availableServers[entry] += _updateTime; // Increment time
@@ -91,8 +91,6 @@ namespace Rhinox.Pulse
                     _availableServers.Remove(entry);
                 }
             }
-
-            if (_deceasedServers.Count == 0) return;
 
             foreach (var deceasedServer in _deceasedServers.Keys.ToArray())
             {
@@ -146,8 +144,11 @@ namespace Rhinox.Pulse
             {
                 case "GET":
                 {
-                    var jsonResponse = JsonHelper.ToJson(_availableServers.Keys.ToArray());
-                    MakeResponse(response, System.Text.Encoding.UTF8.GetBytes(jsonResponse), 200);
+                    lock (_lockObj)
+                    {
+                        var jsonResponse = JsonHelper.ToJson(_availableServers.Keys.ToArray());
+                        MakeResponse(response, System.Text.Encoding.UTF8.GetBytes(jsonResponse), 200);
+                    }
                     break;
                 }
                 case "POST":
@@ -155,17 +156,25 @@ namespace Rhinox.Pulse
                     using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
                     {
                         var text = reader.ReadToEnd();
-                        ServerInfo info = JsonUtility.FromJson<ServerInfo>(text);
+
+                        // convert from url to normal
+                        string decodedText = HttpUtility.UrlDecode(text);
+
+                        ServerInfo info = JsonUtility.FromJson<ServerInfo>(decodedText);
                         if (info == null)
                             return;
 
-                        if (_availableServers.ContainsKey(info))
-                            _availableServers[info] = 0;
-                        else
+                        lock (_lockObj)
                         {
-                            _availableServers.Add(info, 0);
-                            //if server sprung back to life, then it should be removed from the deceased list
-                            _deceasedServers.RemoveFirst(x => x.Key == $"{info.IP}:{info.Port.ToString()}");
+                            if (_availableServers.ContainsKey(info))
+                                _availableServers[info] = 0;
+                            else
+                            {
+                                _availableServers.Add(info, 0);
+
+                                //if server sprung back to life, then it should be removed from the deceased list
+                                _deceasedServers.RemoveFirst(x => x.Key == $"{info.IP}:{info.Port.ToString()}");
+                            }
                         }
                     }
 

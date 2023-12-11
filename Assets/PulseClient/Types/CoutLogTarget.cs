@@ -13,7 +13,7 @@ namespace Rhinox.Pulse
         {
             base.ApplySettings(settings);
 
-            // Console.OutputEncoding = Encoding.UTF32;
+            Console.OutputEncoding = Encoding.UTF8;
         }
 
         protected override void OnLog(LogLevels level, string message, UnityEngine.Object associatedObject = null)
@@ -21,7 +21,6 @@ namespace Rhinox.Pulse
             if (Silence)
                 return;
 
-            // Also log to Unity
             switch (level)
             {
                 case LogLevels.Trace:
